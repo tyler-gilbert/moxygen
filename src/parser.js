@@ -49,7 +49,15 @@ function toMarkdown(element, context) {
             break;
 
           case 'parameteritem': s = '* '; break;
-          case 'programlisting': s = '\n```cpp\n'; break;
+          case 'programlisting': 
+            var extension = 'cpp';
+            if( element.$ !== undefined ){
+              if( element.$.filename !== undefined ){
+                extension = element.$.filename.substr(1);
+              }
+            }
+            s = '\n```' + extension + '\n'; 
+            break;
           case 'orderedlist':
             context.push(element);
             s = '\n\n';
@@ -141,7 +149,7 @@ function toMarkdown(element, context) {
             s += '\n';
             break;
           case 'itemizedlist': s += '\n'; break;
-          case 'listitem': s += '\n'; break;
+          case 'listitem': s = s.replace('\n', ''); break;
           case 'entry': s = ' | '; break;
           case 'xreftitle': s += ': '; break;
           case 'preformatted': s += '</pre>\n'; break;
