@@ -19,6 +19,8 @@ program.version(pjson.version)
   .option('-l, --language <lang>', 'programming language', String, 'cpp')
   .option('-t, --templates <dir>', 'custom templates directory', String, 'templates')
   .option('-q, --quiet', 'quiet mode', false)
+  .option('-ls, --linksuffix <suffix>', 'file suffix for links', String, '.md')
+  .option('-lp, --linkprefix <path>', 'prefix path for links', String, '')
   .parse(process.argv);
 
 if (!program.quiet) {
@@ -36,7 +38,9 @@ if (program.args.length) {
     anchors: program.anchors,
     htmlAnchors: program.htmlAnchors,
     language: program.language,
-    templates: program.templates
+    templates: program.templates,
+    linksuffix: program.linksuffix,
+    linkprefix: program.linkprefix
   }));
 }
 else {

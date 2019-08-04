@@ -68,6 +68,10 @@ module.exports = {
 
   // Replace ref links to point to correct output file if needed
   resolveRefs: function(content, compound, references, options) {
+    if( content === undefined ){
+      return '';
+    }
+
     return content.replace(/\{#ref ([^ ]+) #\}/g, function(_, refid) {
       var ref = references[refid]
       var page = this.findParent(ref, ['page']);
@@ -75,21 +79,21 @@ module.exports = {
       if (page) {
         if (page.refid == compound.refid)
           return '#' + refid;
-        return this.compoundPath(page, options) + '#' + refid;
+        return options.linkprefix + this.compoundPath(page, options).replace('.md', options.linksuffix) + '#' + refid;
       }
 
       if (options.groups) {
         if (compound.groupid && compound.groupid == ref.groupid)
           return '#' + refid;
-        return this.compoundPath(ref, options) + '#' + refid;
+        return options.linkprefix + this.compoundPath(ref, options).replace('.md', options.linksuffix) + '#' + refid;
       } else if (options.classes) {
         var dest = this.findParent(ref, ['namespace', 'class', 'struct']);
         if (!dest || compound.refid == dest.refid)
           return '#' + refid;
-        return this.compoundPath(dest, options) + '#' + refid;
+        return options.linkprefix + this.compoundPath(dest, options).replace('.md', options.linksuffix) + '#' + refid;
       } else {
         if (compound.kind == 'page')
-          return this.compoundPath(compound.parent, options) + '#' + refid;
+          return options.linkprefix + this.compoundPath(compound.parent, options).replace('.md', options.linksuffix) + '#' + refid;
         return '#' + refid;
       }
     }.bind(this));
@@ -97,11 +101,13 @@ module.exports = {
 
   compoundPath: function(compound, options) {
     if (compound.kind == 'page') {
-      return path.dirname(options.output) + "/page-" + compound.name + ".md";
+      return path.dirname(options.output) + "/page-" + compound.name + '.md';
     } else if (options.groups) {
       return util.format(options.output, compound.groupname);
     } else if (options.classes) {
-      return util.format(options.output, compound.name.replace(/\:/g, '-'));
+      var name = compound.name.replace(/\:/g, '-'); //namepace::api -> namespace--api
+      name = name.replace('--', '-'); //namespace--api -> namespace-api
+      return util.format(options.output, name);
     } else {
       return options.output;
     }

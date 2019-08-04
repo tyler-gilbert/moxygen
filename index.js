@@ -28,6 +28,8 @@ module.exports = {
     templates: 'templates',     /** Templates directory **/
     pages: false,               /** Output doxygen pages separately **/
     classes: false,             /** Output doxygen classes separately **/
+    linkprefix: '',             /** Path prefix for links **/
+    linksuffix: '.md',          /** File suffix for links */
 
     filters: {
       members: [
