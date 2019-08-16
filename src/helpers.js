@@ -18,27 +18,87 @@ module.exports = {
     if (Array.isArray(code)) {
       var refs, s = '', isInline = false;
       code.forEach(function (e) {
-        refs = e.split(/(\[.*\]\(.*\)|\n|\s{2}\n)/g);
-        refs.forEach(function (f) {
-          if (f.charAt(0) == '[') {
-            // link
-            var link = f.match(/\[(.*)\]\((.*)\)/);
-            if (link) {
-              isInline ? (s += '`') && (isInline = false) : null;
-              s += '[`' + link[1] + '`](' + link[2] + ')';
+        if (1) {
+          switch (e) {
+            case ' ':
+              s += e;
+              break;
+            case 'inline':
+              break;
+            case '(':
+              s += e;
+              openparen = true;
+              parameter = true;
+              break;
+            case ')':
+              if (openparen) {
+                s += e;
+              } else {
+                s += '  \n> ' + e;
+              }
+              closeparen = true;
+              break;
+            case ',':
+              s += e + '  \n';
+              parameter = true;
+              break;
+
+            case '':
+              break;
+
+            case 'public':
+            case 'inline':
+              break;
+
+            case 'const':
+            case 'char':
+            case 'int':
+            case 'float':
+              keyword = true;
+            default:
+              if (openparen && !closeparen) {
+                s += '  \n\n';
+                openparen = false;
+              }
+
+              if (parameter && !closeparen) {
+                s += '> ';
+                parameter = false;
+              }
+
+              if (keyword) {
+                keyword = false;
+                s += `*${e}*`;
+              } else {
+                s += e;
+              }
+              break;
+          }
+
+        } else {
+          refs = e.split(/(\[.*\]\(.*\)|\n|\s{2}\n)/g);
+          refs.forEach(function (f) {
+            if (f.charAt(0) == '[') {
+              // link
+              var link = f.match(/\[(.*)\]\((.*)\)/);
+              if (link) {
+                isInline ? (s += '`') && (isInline = false) : null;
+                s += '[`' + link[1] + '`](' + link[2] + ')';
+              }
             }
-          }
-          else if (f == '\n' || f == '  \n') {
-            // line break
-            isInline ? (s += '`') && (isInline = false) : null;
-            s += f;
-          }
-          else if (f) {
-            !isInline ? (s += '`') && (isInline = true) : null;
-            s += f;
-          }
-        });
+            else if (f == '\n' || f == '  \n') {
+              // line break
+              isInline ? (s += '`') && (isInline = false) : null;
+              s += f;
+            }
+            else if (f) {
+              !isInline ? (s += '`') && (isInline = true) : null;
+              s += f;
+            }
+          });
+        }
       });
+      
       return s + (isInline ? '`' : '');
     }
     else {
