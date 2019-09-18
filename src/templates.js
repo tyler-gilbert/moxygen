@@ -45,7 +45,6 @@ module.exports = {
       case 'page':
         template = 'page'
         break;
-      case 'group':
       case 'namespace':
         if (Object.keys(compound.compounds).length === 1
           && compound.compounds[Object.keys(compound.compounds)[0]].kind == 'namespace') {
@@ -53,10 +52,15 @@ module.exports = {
         }
         template = 'namespace';
         break;
+      case 'group':
+          template = 'group';
+          break;
       case 'class':
-      case 'struct':
         template = 'class';
         break;
+      case 'struct':
+          template = 'struct';
+          break;
       default:
         log.warn('Cannot render ' + compound.kind + ' ' + compound.fullname);
         console.log('Skipping ', compound);

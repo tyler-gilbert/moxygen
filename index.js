@@ -41,12 +41,14 @@ module.exports = {
         'property',
         'public-attrib',
         'public-func',
+        'public-static-func',
         'protected-attrib',
         'protected-func',
         'signal',
         'public-slot',
         'protected-slot',
-        'public-type'
+        'public-type',
+        'typedef'
       ],
       compounds: [
         'namespace',

@@ -231,7 +231,7 @@ module.exports = {
   },
 
   parseMember: function (member, section, memberdef) {
-    log.verbose('Processing member ' + member.kind + ' ' + member.name);
+    log.verbose(`Processing member ${member.kind} ${member.name} in ${section}`);
     member.section = section;
     copy(member, 'briefdescription', memberdef);
     copy(member, 'detaileddescription', memberdef);
@@ -294,6 +294,12 @@ module.exports = {
         // m = m.concat(memberdef.name[0]._);
         m = m.concat(markdown.refLink(member.name, member.refid));
         break;
+
+      case 'typedef':
+          m = m.concat([member.kind, ' ']);
+          m = m.concat(toMarkdown(memberdef.type), ' ');
+          m = m.concat([markdown.refLink(member.name, member.refid)]);
+          break;
 
       case 'enum':
         member.enumvalue = [];
@@ -361,7 +367,9 @@ module.exports = {
 
   extractPageSections: function(page, elements) {
     elements.forEach(function(element) {
-      if (element['#name'] == 'sect1' || element['#name'] == 'sect2' || element['#name'] == 'sect3') {
+      if (element['#name'] == 'sect1' || 
+          element['#name'] == 'sect2' || 
+          element['#name'] == 'sect3') {
         var id = element.$.id;
         var member = { section: element['#name'], id: id, name: id, refid: id, parent: page };
         page.members.push(member);
@@ -427,7 +435,9 @@ module.exports = {
       }.bind(this));
     }
 
-    compound.proto = helpers.inline([compound.kind, ' ', markdown.refLink(compound.name, compound.refid)]);
+    compound.proto = helpers.inline(
+      [compound.kind, ' ', markdown.refLink(compound.name, compound.refid)]
+      );
 
     // kind specific parsing
     switch (compound.kind) {

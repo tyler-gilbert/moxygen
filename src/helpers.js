@@ -17,6 +17,12 @@ module.exports = {
   inline: function(code) {
     if (Array.isArray(code)) {
       var refs, s = '', isInline = false;
+      var openparen = false;
+      var closeparen = false;
+      var parameter = false;
+      var keyword = false;
+      var count = 0;
+      var isDefine = (code[0] == "define");
       code.forEach(function (e) {
         if (1) {
           switch (e) {
@@ -97,6 +103,7 @@ module.exports = {
             }
           });
         }
+        count++;
       });
       
       return s + (isInline ? '`' : '');
